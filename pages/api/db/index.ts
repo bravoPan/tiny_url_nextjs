@@ -1,6 +1,7 @@
 import { QuerySnapshot } from "firebase/firestore";
 // import querySnapshot from "../../../modules/firestore/dataProcess"
 import { firebaseApiStats, querySnapshot, store, urlQuery } from "../../../modules/firestore/dataProcess";
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore'
 
 export type queryReponse = {
   longURL: string,
@@ -9,9 +10,14 @@ export type queryReponse = {
   githubUserImageURL: string
 }
 
+export type prevDocsRef = {
+  urlDocRef: QueryDocumentSnapshot<DocumentData>,
+  creationDocRef: QueryDocumentSnapshot<DocumentData>
+}
+
 export type queryBatchReponse = {
-  nextIndex: number,
-  data: [queryReponse]
+  prevDocsRef: prevDocsRef,
+  data: queryReponse[]
 }
 
 export default async function handler(req:any, res:any){

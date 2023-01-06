@@ -9,7 +9,6 @@ import { ShortRow } from '../components/Home/shortImage'
 import { useSession, signIn, signOut } from "next-auth/react";
 import { githubInfo } from '../modules/firestore/dataProcess'
 
-
 const inter = Inter({ subsets: ['latin'] })
 
 const postLongURL = async (longURL: string, githubData:githubInfo)=>{
