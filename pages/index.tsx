@@ -4,10 +4,14 @@ import { Inter } from '@next/font/google'
 import styles from '../styles/Home.module.css'
 import { idToLongURL } from '../modules/encrypt/encrypt'
 import { shortURLtoID } from '../modules/decrypt/decrypt'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { ShortRow } from '../components/Home/shortImage'
+import { UrlRow } from '../components/Home/shortImage'
 import { useSession, signIn, signOut } from "next-auth/react";
 import { githubInfo } from '../modules/firestore/dataProcess'
+import { queryReponse } from './api/db'
+import { Text } from "@nextui-org/react";
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,23 +34,56 @@ const queryURL = async (longURL: string) => {
       'Content-Type': 'application/json'
     }
   })
-  // console.log(response.json())
+
   if(response.status === 200){
-    console.log(await response.json())
+    // console.log(response.json())
+    const resp:queryReponse = await response.json()
+    return resp.longURL
+  } else{
+    return ""
   }
-  
-  return "hh"
 }
 
+const postNextPage = async (prevDocRef=null) => {
+  const response = await fetch("/api/db/page", {
+    method: "POST",
+    body: JSON.stringify({prevDocRef}),
+    headers : {
+      'Content-Type': 'application/json'
+    }
+  })
+  const data = await response.json()
+  
+  return data
+}
+
+
 export default function Home() {
+
   const { data: session } = useSession();
   const [urlInput, setURLInput] = useState('');
 
   const [queryURLInput, setQueryURLInput] = useState('')
+  const [urlData, setUrlData] = useState<queryReponse[]>([])
+
+  const [queryURLData, setQueryURLData] = useState('')
+
+  const [prevDocsRef, setPrevDocsRef] = useState({})
+  const testData = [1,2,3]
 
   const handleURLInputChange = (e:React.FormEvent<HTMLInputElement>) => {
     e.preventDefault();
     setURLInput(e.currentTarget.value);
+  }
+
+  // const queryLongURLHandler = (longURL: string) => {
+  //   const queryResult = await queryURL(longURL)
+  //   setQueryURLData(queryResult)
+  // }
+
+  const renderData = async () => {
+    const data = await postNextPage()
+    setUrlData(data.data)
   }
 
   return (
@@ -59,6 +96,15 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
         
       </Head>
+      <Text
+        h1
+        size={60}
+        css={{
+          textGradient: "45deg, $blue600 -20%, $pink600 50%",
+        }}
+        weight="bold">
+        Shorten Your Loooooong URL
+      </Text>
 
       <div>
         {session? 
@@ -73,16 +119,22 @@ export default function Home() {
             githubUserImageURL: session.user?.image as string,
             githubUserName: session.user?.name as string})}>post</button>
           <button onClick={()=>signOut()}>Signout</button>
+            <button onClick={()=>renderData()}>Next Page</button>
+            <button >Query LonURL</button>
+            <UrlRow data={urlData}/>
         </>
         :
         <>
-        <input type="text" placeholder='Your Long URL' onChange={e => setQueryURLInput(e.currentTarget.value)} />
-        <button onClick={()=>queryURL(queryURLInput)}>queryURL</button>
+        <div>
+          <input type="text" placeholder='Your Long URL' onChange={e => setQueryURLInput(e.currentTarget.value)} />
+          <button onClick={async () => {setQueryURLData(await queryURL(queryURLInput))}}>Search</button>
+          <div>{queryURLData}</div>
+        </div>
+        
         <button onClick={(e) => {e.preventDefault;signIn()}}>Sign in</button>
         </>
         }
         
-        {/* <button onClick={() => console.log(shortURLtoID(idToLongURL(0)))}>Enlongate</button> */}
       </div>
       
   </div>

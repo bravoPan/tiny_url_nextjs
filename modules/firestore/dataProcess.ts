@@ -1,7 +1,8 @@
 import { db } from "./db"
 import { shortURLtoID } from "../decrypt/decrypt"
-import { queryReponse, queryBatchReponse, prevDocsRef } from "../../pages/api/db"
-import { limit, orderBy, collection, addDoc, getCountFromServer, query, where, getDoc, getDocs, QuerySnapshot, startAfter, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore'
+// import { prevDocsRef,queryBatchReponse } from "../../pages/api/db/page/index"
+// import { queryReponse } from "../../pages/api/db/page/index"
+import { limit, orderBy, collection, addDoc, getCountFromServer, query, where, getDoc, getDocs, QuerySnapshot, startAfter, QueryDocumentSnapshot, DocumentData, limitToLast } from 'firebase/firestore'
 
 export type githubInfo = {
     githubUserName: string,
@@ -32,18 +33,19 @@ export enum firebaseApiStats {
 export const store = async (longURL:string, githubData:githubInfo) => {
     try {
         // first query to check longURL not in db
-        const shortID = shortURLtoID(longURL)
+        // const shortID = shortURLtoID(longURL)
         const urlRef = collection(db, "url")
-        const qRef = query(urlRef, where("shortID", "==", shortID))
+        const qRef = query(urlRef, where("longurl", "==", longURL))
         
         const urlQuerySnapshot = await getDocs(qRef)
         if (urlQuerySnapshot.docs.length !== 0) {
             return firebaseApiStats.URL_STORE_EXISTED
         }
 
+        const urlCount = await getCountFromServer(urlRef)
         const urlDocRef = await addDoc(collection(db, "url"), {
           longurl: longURL,
-          shortID: shortID
+          shortID: urlCount.data().count
         });
 
         if (urlDocRef === null)
@@ -53,7 +55,7 @@ export const store = async (longURL:string, githubData:githubInfo) => {
           github_user_email: githubData.githubUserEmail,
           github_user_image: githubData.githubUserImageURL,
           github_user_name: githubData.githubUserName,
-          shortID: shortID
+          shortID: urlCount.data().count
         })
 
         if (usersDocRef === null)
@@ -65,9 +67,9 @@ export const store = async (longURL:string, githubData:githubInfo) => {
       }
 }
 
-export const urlQuery = async (longURL:string) => {
+export const urlQuery = async (shortURL:string) => {
     try {
-        const shortID = shortURLtoID(longURL)
+        const shortID = shortURLtoID(shortURL)
         // query url collection
         const urlRef = collection(db, "url")
         const qRef = query(urlRef, where("shortID", "==", shortID))
@@ -93,54 +95,4 @@ export const urlQuery = async (longURL:string) => {
     } catch (e) {
         return [null, firebaseApiStats.QUERY_UNDEFINED]
     }
-}
-
-export const urlGetBatch = async (requestDocParam:prevDocsRef|null, maxPageNum:number=parseInt(process.env.MAX_RECORD_NUM as string)) => {
-    let prevUrlDoc : null|QueryDocumentSnapshot<DocumentData>
-    let prevCreationDoc : null|QueryDocumentSnapshot<DocumentData>
-    
-    if (requestDocParam === null) 
-        prevUrlDoc = prevCreationDoc = null;
-    else{
-        const {urlDocRef, creationDocRef } = requestDocParam as prevDocsRef
-        prevUrlDoc = urlDocRef
-        prevCreationDoc = creationDocRef
-    }
-        
-    // Query the first batch page of docs
-    const curUrlQueryRef = query(
-        collection(db, "url"),
-        orderBy("shortID"),
-        startAfter(prevUrlDoc),
-        limit(maxPageNum));
-    const urlDocumentSnapshots = await getDocs(curUrlQueryRef);
-
-    // Get the last visible URL document
-    const lastUrlVisible = urlDocumentSnapshots.docs[urlDocumentSnapshots.docs.length-1];
-
-    // QUery the first batch page of creations
-    const curCreationQueryRef = query(
-        collection(db, "creation"),
-        orderBy("shortID"),
-        startAfter(prevCreationDoc),
-        limit(maxPageNum));
-    const creationDocumentSnapshots = await getDocs(curCreationQueryRef);
-
-    // Get the last visible creation document
-    const lastCreationVisible = creationDocumentSnapshots.docs[creationDocumentSnapshots.docs.length-1];
-    
-    let result:queryBatchReponse = {data: [], prevDocsRef: {urlDocRef: lastUrlVisible, creationDocRef: lastCreationVisible}}
-    for(let i=0; i < urlDocumentSnapshots.docs.length; i++){
-        const curUrlDocData = urlDocumentSnapshots.docs[i].data()
-        const curCreationDocData = creationDocumentSnapshots.docs[i].data()
-        console.log(curUrlDocData.shortID === curCreationDocData.shortID)
-        result.data.push({
-            longURL: curUrlDocData.longurl,
-            githubUserEmail: curCreationDocData.github_user_email,
-            githubUserImageURL: curCreationDocData.github_user_image,
-            githubUserName: curCreationDocData.github_user_name
-        })
-    }
-    
-    return result
 }

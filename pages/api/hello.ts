@@ -13,19 +13,19 @@
 // }
 
 // import { queryBatchReponse } from "./db";
-import { urlGetBatch } from "../../modules/firestore/dataProcess"
-import { prevDocsRef, queryBatchReponse } from "./db/index"
+import { pageNext } from "../../modules/firestore/pagnition"
+import { prevDocsRef, queryBatchReponse } from "./db/page/index"
   // experiment query
   
 
 export default async function handler(req:any, res:any){
-  const curBatch = await urlGetBatch(null, 2)
+  const curBatch = await pageNext(null, 2)
 
   const lastDocsRef = curBatch.prevDocsRef
-  const nextBatch = await urlGetBatch(lastDocsRef, 2)
+  const nextBatch = await pageNext(lastDocsRef, 2)
 
   // next next batch
   const lastLastDocsRef = nextBatch.prevDocsRef
-  const nextnextBatch = await urlGetBatch(lastLastDocsRef, 2)
+  const nextnextBatch = await pageNext(lastLastDocsRef, 2)
   console.log(nextnextBatch)
 }

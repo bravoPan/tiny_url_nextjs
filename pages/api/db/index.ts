@@ -4,20 +4,11 @@ import { firebaseApiStats, querySnapshot, store, urlQuery } from "../../../modul
 import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore'
 
 export type queryReponse = {
+  shortID: number,
   longURL: string,
   githubUserName: string,
   githubUserEmail: string,
   githubUserImageURL: string
-}
-
-export type prevDocsRef = {
-  urlDocRef: QueryDocumentSnapshot<DocumentData>,
-  creationDocRef: QueryDocumentSnapshot<DocumentData>
-}
-
-export type queryBatchReponse = {
-  prevDocsRef: prevDocsRef,
-  data: queryReponse[]
 }
 
 export default async function handler(req:any, res:any){
@@ -33,13 +24,14 @@ export default async function handler(req:any, res:any){
       res.status(401).json('query data not found, errCode:', firebaseQueryStats)
       return
     }
-
+    
     let {urlQuerySnapshot, creationQUerySnapshot} = data as querySnapshot
 
     // it is ensured only one long url record will be found.
     const urlQueryRecord = urlQuerySnapshot.docs.map(x => x.data())[0]
     const creationQueryRecord = creationQUerySnapshot.docs.map(x => x.data())[0]
     const reponse:queryReponse = {
+      shortID: urlQueryRecord.shortID,
       longURL: urlQueryRecord.longurl,
       githubUserEmail: creationQueryRecord.github_user_email,
       githubUserImageURL: creationQueryRecord.github_user_image,
