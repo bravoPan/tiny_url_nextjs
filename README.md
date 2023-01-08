@@ -12,3 +12,11 @@ A full stack short url website implemented by nextjs framework. Please visit htt
 - hosting: vercel
 - algorithm: thanks to [geeksforgeeks](https://www.geeksforgeeks.org/how-to-design-a-tiny-url-or-url-shortener/)
 
+## Config on Vercel
+- Firebase SKD
+- Github ID&Secre
+- Github Oauth Page
+  - HomePage URL: vercel domain
+  - Authorization callback URL: v_domain/api/auth/callback/github
+- NEXTAUTH_URL: v_domain/api/auth
+- NEXTAUTH_SECRET: according to vercel [depolyment instruction](https://next-auth.js.org/configuration/options#secret), this is required to set in your code.
