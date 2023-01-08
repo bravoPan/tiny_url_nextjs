@@ -156,7 +156,7 @@ export default function Home() {
                     {/* <input type="text" placeholder='Your Long URL' onChange={e => setQueryURLInput(e.currentTarget.value)} />
                     <Button onClick={async () => { setQueryURLData(await queryURL(queryURLInput)) }}>Search</Button> */}
                     <div>{queryURLData}</div>
-                    <Button color="gradient"onClick={(e) => { e.preventDefault(); signIn() }}>Sign in</Button>
+                    <Button color="gradient"onClick={(e) => { e.preventDefault; signIn() }}>Sign in</Button>
                   </div>
                 </Grid>
 
