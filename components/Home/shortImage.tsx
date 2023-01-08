@@ -30,7 +30,7 @@ export const UrlRow = (props: { data: queryReponse[] }) => {
               </Card.Header>
               <Card.Body css={{ py: "$2" }}>
                 <Link block href={"/s/" + idToLongURL(x.shortID)} css={{ fontSize: "20px" }}>
-                  localhost:3000/{idToLongURL(x.shortID)}
+                turl-two.vercel.app/{idToLongURL(x.shortID)}
                 </Link>
 
               </Card.Body>
