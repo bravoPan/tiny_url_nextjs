@@ -11,6 +11,12 @@ export type queryReponse = {
   githubUserImageURL: string
 }
 
+export type GithubInfo = {
+  githubUserName: string,
+  githubUserEmail: string,
+  githubUserImageURL: string
+}
+
 export default async function handler(req:any, res:any){
   if (req.method === 'POST' ) {
     const {longURL, githubData} = req.body

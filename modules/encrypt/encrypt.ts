@@ -6,7 +6,9 @@
 export const idToLongURL = (id:number) => {
     const urlMap = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$-_.+!*'(),"
     let shortURL = []
-    
+    if (id == 0) {
+        return "a"
+    }
     while(id > 0){
         shortURL.push(urlMap[id % 73]);
         id = Math.floor(id/73);

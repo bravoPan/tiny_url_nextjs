@@ -1,7 +1,7 @@
 import { db } from "./db";
 import { queryBatchReponse } from "../../pages/api/db/page/index";
 import { prevDocsRef } from "../../pages/api/db/page/index";
-import { QueryDocumentSnapshot, DocumentData, query, collection, orderBy, startAfter, limit, getDocs, getCountFromServer,  } from "firebase/firestore";
+import { Query,QueryDocumentSnapshot, DocumentData, query, collection, orderBy, startAfter, limit, getDocs, getCountFromServer,  } from "firebase/firestore";
 
 export const pageNext = async (requestDocParam:prevDocsRef|null, maxPageNum:number=parseInt(process.env.MAX_RECORD_NUM as string)) => {
     let prevUrlDoc : null|QueryDocumentSnapshot<DocumentData>
@@ -19,19 +19,18 @@ export const pageNext = async (requestDocParam:prevDocsRef|null, maxPageNum:numb
     // Query the first batch page of docs
     const curUrlQueryRef = query(
         collection(db, "url"),
-        orderBy("shortID"),
-        startAfter(prevUrlDoc),
+        orderBy("shortID", "desc"),
         limit(maxPageNum));
     const urlDocumentSnapshots = await getDocs(curUrlQueryRef);
-
+    
+    // DEPRECATE: pagnition interface is not usable now.
     // Get the last visible URL document
-    let lastUrlVisible = urlDocumentSnapshots.docs[urlDocumentSnapshots.docs.length-1];
+    let lastUrlVisible = urlDocumentSnapshots.docs[0];
 
     // QUery the first batch page of creations
     const curCreationQueryRef = query(
         collection(db, "creation"),
         orderBy("shortID"),
-        startAfter(prevCreationDoc),
         limit(maxPageNum));
     const creationDocumentSnapshots = await getDocs(curCreationQueryRef);
 
