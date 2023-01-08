@@ -4,7 +4,6 @@ import { idToLongURL } from "../../modules/encrypt/encrypt";
 
 
 export const UrlRow = (props: { data: queryReponse[] }) => {
-  console.log(process.env.NEXTAUTH_URL)
   return (
     <div style={{ marginTop: "20px" }}>
       {props.data.map((x) => {

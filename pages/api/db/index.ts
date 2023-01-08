@@ -11,10 +11,6 @@ export type queryReponse = {
   githubUserImageURL: string
 }
 
-export type queryBatchReponse = {
-  prevDocsRef: prevDocsRef,
-  data: queryReponse[]
-}
 
 export type GithubInfo = {
   githubUserName: string,
