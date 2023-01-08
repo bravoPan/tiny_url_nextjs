@@ -13,7 +13,7 @@ A full stack short url website implemented by nextjs framework. Please visit htt
 - algorithm: thanks to [geeksforgeeks](https://www.geeksforgeeks.org/how-to-design-a-tiny-url-or-url-shortener/)
 
 ## Config on Vercel
-- Firebase SKD
+- Firebase SDK
 - Github ID&Secre
 - Github Oauth Page
   - HomePage URL: vercel domain
