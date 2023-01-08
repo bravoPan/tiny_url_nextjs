@@ -1,5 +1,5 @@
 # ![](./public/logo.png)
-Not a big meal! Tidbit URL will make your url shorten and delicious 😋. A full stack short url web app implemented by nextjs framework. Follow the construction and make your own Turl app (free on vercel!).
+Not a big meal! Tidbit URL will make your url shorten and delicious 😋. A full stack short url web app implemented by nextjs framework. Follow the instruction and make your own Turl app (free on vercel!).
 
 ## Demo
 Visit https://turl-two.vercel.app and have fun!
