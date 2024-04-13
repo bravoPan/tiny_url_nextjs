@@ -16,7 +16,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { githubInfo } from '../modules/firestore/dataProcess'
 import { queryReponse } from './api/db'
 import { Input, Spacer, Navbar, Grid, Text, Button, Loading, Container } from "@nextui-org/react";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import SpeedInsights from "@vercel/speed-insights/next"
 
 
 const inter = Inter({ subsets: ['latin'] })
